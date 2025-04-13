@@ -329,12 +329,12 @@ exports.allTeachers=async(req,res)=>{
 
 exports.logout=(req,res)=>{
     try {
-        const option={
+        const options={
             httpOnly:true,
             expires: new Date(0)
         } 
         
-        return res.cookie("token","",option).status(200).json({
+        return res.cookie("token","",options).status(200).json({
             success:true,
             message:"Successfully logged out"
         })
