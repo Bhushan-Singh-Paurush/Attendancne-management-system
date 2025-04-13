@@ -50,7 +50,7 @@ export function getUserDetail(){
             
             
         } catch (error) {
-            console.log(error.response.data.message);
+            
         }
         dispatch(setUserLoading(false))
     }
