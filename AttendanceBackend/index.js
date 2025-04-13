@@ -27,6 +27,10 @@ app.use("/api1/date",dateRouter)
 app.use("/api1/subject",subjectRouter)
 app.use("/api1/student",studentRouter)
 
+app.get("/",(req,res)=>{
+    res.send('<p>some html</p>')
+})
+
 const port = process.env.PORT || 5500 
 
 if (!fs.existsSync("./public")) {
