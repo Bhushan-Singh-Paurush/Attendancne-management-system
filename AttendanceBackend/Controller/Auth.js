@@ -330,9 +330,11 @@ exports.allTeachers=async(req,res)=>{
 exports.logout=(req,res)=>{
     try {
         const options={
+            maxAge:new Date(0),
             httpOnly:true,
-            expires: new Date(0)
-        } 
+            secure:process.env.PRODUCTION==="production" ? true : false,
+            sameSite:'none' 
+        }
         
         return res.cookie("token","",options).status(200).json({
             success:true,
