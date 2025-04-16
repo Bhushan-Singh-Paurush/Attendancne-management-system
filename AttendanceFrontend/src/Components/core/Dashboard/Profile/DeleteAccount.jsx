@@ -1,12 +1,19 @@
 import React, { useState } from 'react'
 import { MdDeleteOutline } from "react-icons/md";
 import { DeleteModal } from '../../../common/DeleteModal';
-import { removeUser } from '../../../../services/Operations/auth';
+import { removeUser, userLogout } from '../../../../services/Operations/auth';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 export const DeleteAccount = () => {
    const[modal,setModal]=useState()
+   const dispatch=useDispatch()
+   const navigate=useNavigate()
    const deleteHandler=async()=>{
-        await removeUser()
-        setModal()
+        const result = await removeUser()
+        if(result){
+           dispatch(userLogout(navigate))
+        } 
+        
    }
     return (
     <div className="w-full p-4 flex  items-center  gap-4 bg-pink-800 rounded-sm">

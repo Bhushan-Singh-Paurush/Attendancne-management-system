@@ -37,7 +37,7 @@ exports.signup=async(req,res)=>{
     try {
         const{firstName,lastName,email,password,otp,accountType,pin}=req.body
 
-        if(!firstName || !lastName || !email || !password || !otp || !accountType || !pin)
+        if(!firstName || !email || !password || !otp || !accountType || !pin)
           {
             return res.status(400).json({
                 success:false,

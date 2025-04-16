@@ -25,7 +25,7 @@ exports.sendRestLink=async(req,res)=>{
 
         await user.save()
         
-        const url=`http://localhost:5173/change-password/${token}`
+        const url=`${process.env.CLIENT_URL}/change-password/${token}`
 
         await MailSender(email,"Password reset link",url)
 

@@ -73,9 +73,7 @@ export const Signupdata = ({ setInternalStep }) => {
             name="lastName"
             {...register("lastName")}
           />
-          {errors.lastName && (
-            <span className=" text-lightblack text-xs">Fill this field</span>
-          )}
+          
         </label>
       </div>
       <label className=" flex flex-col gap-1">

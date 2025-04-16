@@ -161,6 +161,7 @@ exports.getAllSemester=async(req,res)=>{
             semesters=semesters.filter(element=>element.branch===branch)
         }
         
+        
         return res.status(200).json({
             success:false,
             message:"All semesters",
@@ -185,8 +186,13 @@ exports.semesterDetails=async(req,res)=>{
                     message:"Provide all fileds"
                 })
         }
-
-        const semesterDetails=await Semester.findOne({course,branch,year,semNo}).populate({
+        const query={
+            course,
+            ...(branch && {branch}),
+            semNo,
+            year
+        }
+        const semesterDetails=await Semester.findOne(query).populate({
             path:"subjects",
             match:{
                 section:section
@@ -196,7 +202,9 @@ exports.semesterDetails=async(req,res)=>{
                 select:"firstName lastName _id"
             }
         }).populate("students")
-
+        
+    
+        
         return res.status(200).json({
             success:false,
             message:"Semester Detail",

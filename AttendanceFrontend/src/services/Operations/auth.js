@@ -2,6 +2,8 @@ import { toast } from "react-toastify"
 import { deleteUser, setUser, setUserLoading} from "../../slice/profile"
 import { auth } from "../api"
 import { apiConnection } from "../apiConnector"
+import { useDispatch } from "react-redux"
+import { useNavigate } from "react-router-dom"
 
 export function signIn(data){
     return async(dispatch)=>{
@@ -120,7 +122,13 @@ export  function editProfile(formdata,setLoading) {
     
             toast.success(response.data.message)
     
-            dispatch(setUser(response.data.updateUser))
+            const user=response.data.updateUser
+            if(!user?.image)
+            {
+                user.image=`https://ui-avatars.com/api/?background=random&name=${user?.firstName}+${user?.lastName}`
+            }
+            dispatch(setUser(user))
+            
             setLoading(false)
         } catch (error) {
             toast.error(error.response.data.message)
@@ -151,6 +159,7 @@ export async function editPassword(password,setLoading){
 
 
 export async function removeUser() {
+    
     try {
         const response=await apiConnection("DELETE",auth.DELETE_ACCOUNT)
         
@@ -159,6 +168,7 @@ export async function removeUser() {
         }
         
         toast.success(response.data.message)
+        return response.data.success    
 
     } catch (error) {
         toast.error(error.response.data.message)
