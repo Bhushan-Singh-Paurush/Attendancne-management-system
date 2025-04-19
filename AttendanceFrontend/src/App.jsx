@@ -18,6 +18,7 @@ import { AttendanceSheet } from "./Components/core/Dashboard/AttendanceSheet"
 import { Report } from "./Components/core/Dashboard/Report"
 import { Slide} from 'react-toastify';
 import { PageNotFound } from "./pages/PageNotFound"
+import { Statistics } from "./Components/core/Dashboard/Statistics"
 
 
 
@@ -54,6 +55,7 @@ function App() {
           user?.accountType===accountType.TEACHER && <>
             <Route path="/dashboard-attendance-sheet" element={<AttendanceSheet/>}/>
             <Route path="/dashboard-report" element={<Report/>}/>
+            <Route path="/dashboard-statistics" element={<Statistics/>}/>
             
           </>
         }

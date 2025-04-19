@@ -31,3 +31,19 @@ export async function getReport(semesterId,section,subjectId,input) {
     }
     
 }
+
+export async function getStatisticsData(data) {
+    try {
+        const response=await apiConnection("GET",date.GET_SEMESTER_DATES,null,null,data)
+
+        if(!response){
+            throw new Error("Failed to get semester date");
+        }
+        toast.success(response.data.message)
+        return response.data.summery
+
+    } catch (error) {
+        toast.error(error.response.data.message)
+    }
+    
+}

@@ -113,3 +113,97 @@ exports.getDates=async(req,res)=>{
     })
     }
 }
+
+
+exports.getAllSemesterDates=async(req,res)=>{
+    try {
+        const{course,section,year,semNo,branch}=req.query
+
+        if(!course || !section || !year || !semNo){
+            return res.status(400).json({
+                success:false,
+                message:"Provide all fields"
+            })
+        }
+
+        const parameter={
+            course,
+            year,
+            semNo,
+            ...(branch && {branch})
+        }
+
+        const semester=await Semester.findOne(parameter).populate({
+            path:"students",
+            match:{
+                section:section
+            },
+            populate:{
+                path:"date"
+            }
+        }).populate({
+            path:"subjects",
+            match:{
+                section:section
+            }
+        })
+
+        if(!semester){
+            return res.status(400).json({
+                success:false,
+                message:"No Semester Found"
+            })
+        }
+        
+        const student=semester.students
+        const subject=semester.subjects
+        const today=new Date().toISOString().split('T')[0]
+        
+
+        const summery=subject.map((subject)=>{
+              let totalPresent=0
+              let todayPresent=0
+              let todayAbsent=0
+              const dateSet=new Set()
+                     
+              student.forEach((student)=>{
+                
+                const attendance=student.date.filter(d=>(d.subjectId.toString()===subject._id.toString()))
+                attendance.forEach(element=>{
+                    dateSet.add(element.date.toISOString().split('T')[0])
+                })
+                
+                const Present=attendance.filter(element=>element.status==="Present")
+                const checkTodayPresent=attendance.filter(element=>(element.date.toISOString().split('T')[0]===today && element.status==="Present"))
+                const checkTodayAbsent=attendance.filter(element=>(element.date.toISOString().split('T')[0]===today && element.status==="Absent"))
+                
+
+                totalPresent+=Present.length
+                todayPresent+=checkTodayPresent.length
+                todayAbsent+=checkTodayAbsent.length
+              })
+              
+                
+              return {
+                subjectName:subject.subjectName,
+                avgPresent:dateSet.size===0 ? 0 : Math.floor(totalPresent/dateSet.size),
+                todayPresent,
+                todayAbsent
+              }
+
+
+        })
+
+        return res.status(200).json({
+            success:true,
+            message:"All semester detail",
+            summery
+        })
+
+    } catch (error) {
+        return res.status(500).json({
+            success:false,
+            message:error.message,
+    })
+    }
+}

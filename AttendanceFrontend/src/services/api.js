@@ -42,5 +42,6 @@ export const student={
 
 export const date={
     CREATE_DATE:baseUrl+"/date/createDate",
-    GET_DATES:baseUrl+"/date/getDates" 
+    GET_DATES:baseUrl+"/date/getDates",
+    GET_SEMESTER_DATES:baseUrl+"/date/getAllSemesterDates" 
 }

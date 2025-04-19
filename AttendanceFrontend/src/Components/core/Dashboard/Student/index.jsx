@@ -8,6 +8,7 @@ import { useState } from "react";
 import { DeleteModal } from "../../../common/DeleteModal";
 import { deleteStudent } from "../../../../services/Operations/Students";
 import { StudentModal } from "./StudentModal";
+import { SemDetailForm } from "../../../common/SemDetailForm";
 
 export const Student = () => {
   const {
@@ -20,18 +21,7 @@ export const Student = () => {
   const [modal, setModal] = useState();
   const [studentModal, setStudentModal] = useState();
   const [isedit, setIsedit] = useState();
-  const {
-    register,
-    setValue,
-    handleSubmit,
-    formState: { errors },
-    watch,
-  } = useForm();
-  const currentCourseId = watch("course");
-  const currentCourse = courses.filter(
-    (element) => element._id === currentCourseId
-  );
-  setValue("branch", "");
+
 
   const deleteHandler = async (studentId) => {
     try {
@@ -56,91 +46,7 @@ export const Student = () => {
         <div>No data Found</div>
       ) : (
         <div className=" my-10 w-11/12 mx-auto flex flex-col gap-4">
-          <form
-            className="  flex justify-between items-center bg-white p-4 text-sm"
-            onSubmit={handleSubmit((data) => submitHandler(data))}
-          >
-            <label className=" p-2 rounded-md border border-gray-400">
-              <div className=" text-gray-200">Course</div>
-              <select
-                
-                name="course"
-                defaultValue=""
-                {...register("course", { required: true })}
-              >
-                <option value="" disabled>
-                  Select Course
-                </option>
-                {courses.map((item, index) => (
-                  <option key={index} value={item._id}>
-                    {item.courseName}
-                  </option>
-                ))}
-                {errors.course && <span>Fill this Field</span>}
-              </select>
-            </label>
-            <label className=" h-[60px] p-2 rounded-md border border-gray-400 min-w-[120px]">
-              <div className=" text-gray-200">Branch</div>
-              {currentCourse?.[0]?.branches && (
-                <select
-                  className=" w-[100px]"
-                  name="branch"
-                  {...register("branch", { required: true })}
-                >
-                  <option value="" disabled>
-                    Select Branch
-                  </option>
-                  {JSON.parse(currentCourse?.[0]?.branches).map(
-                    (item, index) => (
-                      <option key={index} value={item}>
-                        {item}
-                      </option>
-                    )
-                  )}
-                </select>
-              )}
-              {errors.branch && <div>Fill this Field</div>}
-            </label>
-
-            <label className=" p-2 rounded-md border border-gray-400 min-w-[120px]">
-              <div className=" text-gray-200">Section</div>
-              <select
-                className=" w-[120px]"
-                name="section"
-                {...register("section", { required: true })}
-              >
-                <option value="A">A</option>
-                <option value="B">B</option>
-                {errors.section && <span>Fill this Field</span>}
-              </select>
-            </label>
-            <label className=" p-2 rounded-md  min-w-[120px] border border-gray-400">
-              <div className=" text-gray-200">Year</div>
-              <input
-                type="nubmer"
-                className=" w-[100px] border border-gray-400 rounded-sm pl-2"
-                name="year"
-                {...register("year", { required: true })}
-              />
-              {errors.year && <span>Fill this Field</span>}
-            </label>
-            <label className=" p-2 rounded-md  min-w-[120px] border border-gray-400">
-              <div className=" text-gray-200">Sem No.</div>
-              <input
-                type="nubmer"
-                className=" w-[100px]  border border-gray-400 rounded-sm pl-2"
-                name="semNo"
-                {...register("semNo", { required: true })}
-              />
-              {errors.semNo && <span>Fill this Field</span>}
-            </label>
-
-            <CommonBtn
-              type="submit"
-              text={loading ? "Loading..." : "Students"}
-              disabled={loading}
-            />
-          </form>
+           <SemDetailForm courses={courses} loading={loading} submitHandler={submitHandler}/>
         </div>
       )}
       {!semesterDetails ? (
