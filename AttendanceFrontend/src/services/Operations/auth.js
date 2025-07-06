@@ -12,7 +12,7 @@ export function signIn(data){
             dispatch(setUserLoading(true))
 
             const response = await apiConnection("POST",auth.LOGIN,data)
-
+            
             if(!response){
                 throw new Error("Failed to login");
             }
@@ -28,6 +28,7 @@ export function signIn(data){
             
         } catch (error) {
             toast.error(error.response.data.message)
+            
         }
         dispatch(setUserLoading(false))
     }
@@ -216,7 +217,8 @@ export  function userLogout(navigate) {
            
 
         } catch (error) {
-            toast.error(error.response.data.message)
+            toast.error(error.response.data.message);
+            
         }
     }
 }

@@ -46,8 +46,9 @@ axiosInstance.interceptors.response.use((res)=>res, async (err)=>{
         
         
         } catch (error) {
-            console.log('refresh failed');         
+            return Promise.reject(error)       
         }
 
     }
+    return Promise.reject(err)
 })

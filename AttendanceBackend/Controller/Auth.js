@@ -134,7 +134,8 @@ exports.login=async(req,res)=>{
             return res.status(400).json({
                 success:false,
                 message:"Password Mismatched"
-            })
+            })  
+            
         }
         const{accessToken,refreshToken}=createTokens(user)
 
@@ -145,8 +146,8 @@ exports.login=async(req,res)=>{
         const option={
             maxAge:7*24*60*60*1000,
             httpOnly:true,
-            secure:process.env.PRODUCTION==='production' ? true : false,
-            sameSite:'none'
+           // secure:process.env.PRODUCTION==='production' ? true : false,
+           // sameSite:'none'
             
         } 
         
@@ -161,6 +162,7 @@ exports.login=async(req,res)=>{
         })
         
     } catch (error) {
+        
         return res.status(500).json({
             success:false,
             message:"Login failed",
@@ -203,8 +205,8 @@ exports.tokenRegenerate=async(req,res)=>{
         const options={
             maxAge:7*24*60*60*1000,
             httpOnly:true,
-            secure:process.env.PRODUCTION==='production' ? true : false,
-            sameSite:'none'
+           // secure:process.env.PRODUCTION==='production' ? true : false,
+           // sameSite:'none'
             
         }
         return res.cookie("refreshToken",refreshToken,options).status(200).json({
