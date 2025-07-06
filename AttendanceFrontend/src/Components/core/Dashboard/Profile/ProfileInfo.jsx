@@ -8,6 +8,7 @@ export const ProfileInfo = ({ loading, setLoading }) => {
   const [state, setState] = useState({ firstName: "", lastName: "" });
   const { user } = useSelector((state) => state.profile);
   const dispatch=useDispatch()
+  const{accessToken}=useSelector((state)=>state.auth)
   useEffect(() => {
     if (user) {
       setState({
@@ -39,7 +40,7 @@ export const ProfileInfo = ({ loading, setLoading }) => {
               formdata.append("lastName",state.lastName);
             
             setLoading(true)
-            dispatch(editProfile(formdata,setLoading)) 
+            dispatch(editProfile(formdata,setLoading,accessToken)) 
        }else{
         toast.error("No change Found")
        }

@@ -59,7 +59,6 @@ export async function CreateSemester(data) {
          return response.data.updatedSem
     } catch (error) {
        toast.error(error.response.data.message);
-       console.log(error);
        
        
     }

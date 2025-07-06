@@ -4,6 +4,7 @@ import { auth } from "../api"
 import { apiConnection } from "../apiConnector"
 import { useDispatch } from "react-redux"
 import { useNavigate } from "react-router-dom"
+import { setToken } from "../../slice/authSlice"
 
 export function signIn(data){
     return async(dispatch)=>{
@@ -26,7 +27,7 @@ export function signIn(data){
             toast.success(response.data.message)
             
         } catch (error) {
-            toast.error(error.response.data.message)             
+            toast.error(error.response.data.message)
         }
         dispatch(setUserLoading(false))
     }
@@ -34,10 +35,10 @@ export function signIn(data){
 export function getUserDetail(){
     return async(dispatch)=>{
         try {
-            dispatch(setUserLoading(true))
-
-            const response = await apiConnection("GET",auth.GET_USER_DETAILS)
-
+           
+            
+            const response = await apiConnection("GET",auth.REFRESH)
+               
             if(!response){
                 throw new Error("Failed to login");
             }
@@ -48,13 +49,14 @@ export function getUserDetail(){
                 user.image=`https://ui-avatars.com/api/?background=random&name=${user?.firstName}+${user?.lastName}`
             }
             dispatch(setUser(user))
-            dispatch(setUserLoading(false))
+            dispatch(setToken(response.data.accessToken))
+            
             
             
         } catch (error) {
-            
+         toast.error(error.response.data.message)
         }
-        dispatch(setUserLoading(false))
+       
     }
 }
 export async function resetPasswordLink(email) {
@@ -70,9 +72,11 @@ export async function resetPasswordLink(email) {
         toast.error(error.response.data.message)
     }
 }
-export async function changepassword(password,token) {
+export async function changepassword(password,token,accessToken) {
     try {
-        const response=await apiConnection("PATCH",auth.CHANGE_PASSWORD,{password,token})
+        const response=await apiConnection("PATCH",auth.CHANGE_PASSWORD,{password,token},{
+            Authorization:`Bearer ${accessToken}`
+        })
 
         if(!response){
             throw new Error("Failed to change the password");
@@ -110,11 +114,13 @@ export async function signup(signupData,otp) {
             toast.error(error.response.data.message)
          }    
 }
-export  function editProfile(formdata,setLoading) {
+export  function editProfile(formdata,setLoading,accessToken) {
     return async(dispatch)=>{
         try {
             setLoading(true)
-            const response=await apiConnection("PATCH",auth.EDIT_PROFILE,formdata)
+            const response=await apiConnection("PATCH",auth.EDIT_PROFILE,formdata,{
+                Authorization:`Bearer ${accessToken}`
+            })
     
             if(!response){
                 throw new Error("Failed to Edit Profile");
@@ -129,39 +135,46 @@ export  function editProfile(formdata,setLoading) {
             }
             dispatch(setUser(user))
             
-            setLoading(false)
+            
         } catch (error) {
             toast.error(error.response.data.message)
-            setLoading(false)
+            
         }
+        setLoading(false)
     }
     
 }
 
-export async function editPassword(password,setLoading){
+export async function editPassword(password,setLoading,accessToken){
         try {
             setLoading(true)
-            const response=await apiConnection("PATCH",auth.EDIT_PASSWORD,{password})
+            const response=await apiConnection("PATCH",auth.EDIT_PASSWORD,{password},
+                {
+                    Authorization:`Bearer ${accessToken}`
+                }
+            )
 
             if(!response){
                 throw new Error("Failed to Edit Password");
             }
 
             toast.success(response.data.message)
-            setLoading(false)
+            
 
         } catch (error) {
-            toast.error(error.response.data.message)
-            setLoading(false)
+            toast.error(error)
+            
         }
-    
+    setLoading(false)
 }
 
 
-export async function removeUser() {
+export async function removeUser(accessToken) {
     
     try {
-        const response=await apiConnection("DELETE",auth.DELETE_ACCOUNT)
+        const response=await apiConnection("DELETE",auth.DELETE_ACCOUNT,{},{
+            Authorization:`Bearer ${accessToken}`
+        })
         
         if(!response){
             throw new Error("Failed to delete the account");
@@ -185,7 +198,7 @@ export async function getTeachers() {
 
         return response.data.teachers
     } catch (error) {
-        console.log(error.message);
+        toast.error(error.response.data.message);
     }
 }
 

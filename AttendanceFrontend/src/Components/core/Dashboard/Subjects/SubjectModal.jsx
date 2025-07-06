@@ -5,11 +5,13 @@ import { CommonBtn } from "../../../common/CommonBtn";
 import { toast } from "react-toastify";
 import { RxCross2 } from "react-icons/rx";
 import { getTeachers } from "../../../../services/Operations/auth";
+import { useSelector } from "react-redux";
 
 export const SubjectModal = ({ isedit=null, setIsedit, setSemModal, semModal,semesterDetails,setSemesterDetails }) => {
   
   
   const [loading, setLoading] = useState(false);
+  const{accessToken}=useSelector((state)=>state.auth)
   const {
     register,
     handleSubmit,
@@ -84,7 +86,7 @@ export const SubjectModal = ({ isedit=null, setIsedit, setSemModal, semModal,sem
       return;
     }
     setLoading(true)
-    const result =await createNewSubject(data,semesterDetails._id)
+    const result =await createNewSubject(data,semesterDetails._id,accessToken)
     if(result){
       setSemesterDetails((pre)=>({...pre,subjects:[...pre.subjects,result]}))
       setSemModal()

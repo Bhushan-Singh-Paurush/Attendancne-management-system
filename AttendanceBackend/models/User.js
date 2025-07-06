@@ -42,6 +42,9 @@ const userSchema = new mongoose.Schema({
   },
   public_id:{
     type:String
+  },
+  refreshToken:{
+    type:String
   }
 });
 

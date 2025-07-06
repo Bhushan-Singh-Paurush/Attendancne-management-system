@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 import { changepassword } from "../../services/Operations/auth";
 import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
 
 export const ChooseNewPass = ({ setStep }) => {
   const { token } = useParams();
@@ -27,7 +28,8 @@ export const ChooseNewPass = ({ setStep }) => {
       return;
     }
     const password = data.password;
-    const result = await changepassword(password, token);
+    const{accessToken}=useSelector((state)=>state.auth)
+    const result = await changepassword(password, token ,accessToken);
     if (result) {
       setStep(2);
     }

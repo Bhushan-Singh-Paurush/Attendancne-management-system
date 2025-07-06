@@ -5,6 +5,7 @@ import { CommonBtn } from '../../../common/CommonBtn'
 import { createCourse, editCourse } from '../../../../services/Operations/courseApi'
 import { RxCross2 } from "react-icons/rx";
 import { toast } from 'react-toastify'
+import { useSelector } from 'react-redux'
 
 export const CourseModal = ({modal=null,setCourses,courses,setShowCourseModal}) => {
    
@@ -13,7 +14,7 @@ export const CourseModal = ({modal=null,setCourses,courses,setShowCourseModal}) 
         getValues,
         handleSubmit,
         formState:{errors}}=useForm()
-        
+        const{accessToken}=useSelector((state)=>state.auth)
         const[loading,setLoading]=useState(false)
         
         function isEdit(){
@@ -47,7 +48,7 @@ export const CourseModal = ({modal=null,setCourses,courses,setShowCourseModal}) 
                   if(data.branches !==modal.branches)
                     formdata.append("branches",data.branches);
                 setLoading(true)
-                const result=await editCourse(formdata)
+                const result=await editCourse(formdata,accessToken)
                 
                 if(result){   
                     setCourses(courses.map((course=>course._id===result._id ? result : course)))
@@ -63,7 +64,7 @@ export const CourseModal = ({modal=null,setCourses,courses,setShowCourseModal}) 
                 }
                 
             }
-            const result=await createCourse(data)
+            const result=await createCourse(data,accessToken)
             if(result)
             {
                 setCourses([...courses,result]);

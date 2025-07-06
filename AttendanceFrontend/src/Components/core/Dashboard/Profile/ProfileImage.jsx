@@ -8,6 +8,7 @@ import { editProfile} from '../../../../services/Operations/auth'
 export const ProfileImage = ({loading,setLoading}) => {
     const{user}=useSelector((state)=>state.profile)
     const dispatch=useDispatch()
+    const{accessToken}=useSelector((state)=>state.auth)
     const[file,setFile]=useState()
     function submitHandler(event){
          event.preventDefault()
@@ -18,7 +19,7 @@ export const ProfileImage = ({loading,setLoading}) => {
         const formdata=new FormData()
         formdata.append("file",file)
         setLoading(true)
-        dispatch(editProfile(formdata,setLoading)) 
+        dispatch(editProfile(formdata,setLoading,accessToken)) 
     }
     
     return (

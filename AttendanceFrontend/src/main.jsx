@@ -5,7 +5,7 @@ import {BrowserRouter} from "react-router-dom"
 import { configureStore } from '@reduxjs/toolkit'
 import rootReducer from './redux/CombineSlice.js'
 import { Provider } from 'react-redux'
-const store=configureStore({
+export const store=configureStore({
     reducer:rootReducer
 })
 createRoot(document.getElementById('root')).render(
@@ -15,3 +15,4 @@ createRoot(document.getElementById('root')).render(
 </BrowserRouter>
 </Provider>
 )
+

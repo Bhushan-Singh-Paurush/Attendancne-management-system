@@ -1,12 +1,12 @@
 import React, { useState } from 'react'
 import { CommonBtn } from '../../../common/CommonBtn'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { toast } from 'react-toastify'
 import { editPassword } from '../../../../services/Operations/auth'
 
 export const ChangePassword = ({loading,setLoading}) => {
   const[state,setState]=useState({password:"",confirmPassword:""})  
-
+  const{accessToken}=useSelector((state)=>state.auth)
   function changeHandler(event){
     const{name,value}=event.target
     setState((pre)=>({...pre,[name]:value}))
@@ -17,7 +17,7 @@ export const ChangePassword = ({loading,setLoading}) => {
 
         if(state.password===state.confirmPassword)
             {
-                editPassword(state.password,setLoading)
+                editPassword(state.password,setLoading,accessToken)
             }else{
                 toast.error("Password and Confirm Password Mismatched")
                 return ;

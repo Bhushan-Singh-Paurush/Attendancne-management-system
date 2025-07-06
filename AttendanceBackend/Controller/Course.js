@@ -44,6 +44,7 @@ exports.getAllCourses=async(req,res)=>{
 }
 exports.editCourse=async(req,res)=>{
     try {
+        
         const data=req.body
         const{courseId}=req.body
 

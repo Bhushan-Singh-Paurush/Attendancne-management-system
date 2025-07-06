@@ -2,14 +2,15 @@ import React, { useState } from 'react'
 import { MdDeleteOutline } from "react-icons/md";
 import { DeleteModal } from '../../../common/DeleteModal';
 import { removeUser, userLogout } from '../../../../services/Operations/auth';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 export const DeleteAccount = () => {
    const[modal,setModal]=useState()
    const dispatch=useDispatch()
    const navigate=useNavigate()
+   const{accessToken}=useSelector((state)=>state.auth)
    const deleteHandler=async()=>{
-        const result = await removeUser()
+        const result = await removeUser(accessToken)
         if(result){
            dispatch(userLogout(navigate))
         } 

@@ -9,13 +9,14 @@ import { DeleteModal } from "../../../common/DeleteModal";
 import { SubjectModal } from "./SubjectModal";
 import { SemesterDetails } from "../../Hooks/SemesterDetails";
 import { SemDetailForm } from "../../../common/SemDetailForm";
+import { useSelector } from "react-redux";
 
 export const Subjects = () => {
   const{courses,semesterDetails,loading,submitHandler,setLoading,setSemesterDetails}=SemesterDetails() 
   const [semModal, setSemModal] = useState();
   const [isedit, setIsedit] = useState();
   const [modal, setModal] = useState();
-  
+  const{accessToken}=useSelector((state)=>state.auth)
 
  
   const deleteHandler = async (subjectId, userId) => {
@@ -24,7 +25,8 @@ export const Subjects = () => {
       const result = await removeSubject(
         semesterDetails._id,
         subjectId,
-        userId
+        userId,
+        accessToken
       );
       if (result) {
         setSemesterDetails((pre) => ({

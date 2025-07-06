@@ -14,9 +14,11 @@ export async function getAllCourses() {
         toast.error(error.response.data.message)
     }
 }
-export async function createCourse(data){
+export async function createCourse(data,accessToken){
     try {
-        const response=await apiConnection("POST",courses.CREATE_COURSE,data)
+        const response=await apiConnection("POST",courses.CREATE_COURSE,data,{
+            Authorization:`Bearer ${accessToken}`
+        })
         if(!response){
             throw new Error("Failed to create course");
         }
@@ -26,16 +28,18 @@ export async function createCourse(data){
         toast.error(error.response.data.message)
     }
 }
-export async function editCourse(formdata) {
+export async function editCourse(formdata,accessToken) {
     try {
-        const response=await apiConnection("PUT",courses.EDIT_COURSE,formdata)
+        const response=await apiConnection("PUT",courses.EDIT_COURSE,formdata,{
+            Authorization:`Bearer ${accessToken}`
+        })
         if(!response){
-            throw new Error("Failed to edit course");
+            throw new Error("Failed to edit the course");
         }
         toast.success(response.data.message)
         return response.data.updatedCourse
     } catch (error) {
-        toast.error(error.response.data.message)
+        toast.error(error.message)
     }
     
 }

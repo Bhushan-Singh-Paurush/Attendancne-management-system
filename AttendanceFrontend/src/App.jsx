@@ -26,9 +26,8 @@ import { Statistics } from "./Components/core/Dashboard/Statistics"
 function App() {
   const dispatch=useDispatch()
   const{user}=useSelector((state)=>state.profile)
-  
-  useEffect(()=>{
-         dispatch(getUserDetail())
+  useEffect(()=>{  
+        dispatch(getUserDetail()); 
   },[])
 
   return (

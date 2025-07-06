@@ -3,9 +3,11 @@ import { subject } from "../api";
 import { apiConnection } from "../apiConnector";
 
 
-export async function removeSubject(semesterId,subjectId,userId) {
+export async function removeSubject(semesterId,subjectId,userId,accessToken) {
     try {
-        const response=await apiConnection("DELETE",subject.DELETE_SUBJECT,{semesterId,subjectId,userId})
+        const response=await apiConnection("DELETE",subject.DELETE_SUBJECT,{semesterId,subjectId,userId},{
+            Authorization:`Bearer ${accessToken}`
+        })
         
         if(!response){
             throw new Error("Failed to Delete the subject");
@@ -35,9 +37,11 @@ export async function updateSubject(formdata) {
     }
 }
 
-export async function createNewSubject(data,Semester) {
+export async function createNewSubject(data,Semester,accessToken) {
     try {
-        const response=await apiConnection("POST",subject.CREATE_SUBJECT,{...data,Semester})
+        const response=await apiConnection("POST",subject.CREATE_SUBJECT,{...data,Semester},{
+            Authorization:`Bearer ${accessToken}`
+        })
 
         if(!response){
             throw new Error("Failed to create subject");

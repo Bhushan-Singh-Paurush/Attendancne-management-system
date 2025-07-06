@@ -2,7 +2,6 @@ const baseUrl = import.meta.env.VITE_BASE_URL
 
 export const auth={
     LOGIN:baseUrl+"/auth/login",
-    GET_USER_DETAILS:baseUrl+"/auth/getUserDetail",
     PASSWORD_LINK:baseUrl+"/resetpass/sendRestLink",
     CHANGE_PASSWORD:baseUrl+"/resetpass/resetPassword",
     SEND_OTP:baseUrl+"/auth/sendOTP",
@@ -11,7 +10,8 @@ export const auth={
     EDIT_PASSWORD:baseUrl+"/auth/changePassword",
     DELETE_ACCOUNT:baseUrl+"/auth/deleteUser",
     GET_ALL_TEACHERS:baseUrl+"/auth/allTeachers",
-    LOGOUT:baseUrl+"/auth/logout"
+    LOGOUT:baseUrl+"/auth/logout",
+    REFRESH:baseUrl+'/auth/refresh'
 }
 export const courses={
     GET_ALL_COURSES:baseUrl+"/course/getAllCourses",

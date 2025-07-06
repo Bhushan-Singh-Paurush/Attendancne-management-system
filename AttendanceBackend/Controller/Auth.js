@@ -6,6 +6,7 @@ const Subject=require("../models/Subject")
 const { cloudinaryUpload, cloudinaryDelete } = require("../utils/fileUpload")
 require("dotenv").config()
 const fs=require("fs")
+
 exports.sendOTP=async(req,res)=>{
     try {
         const{email}=req.body
@@ -87,6 +88,25 @@ exports.signup=async(req,res)=>{
     }
 }
 
+const createTokens=(user)=>{
+      
+      const accessToken=jwt.sign({
+        id:user._id,
+        accountType:user.accountType,
+        email:user.email
+      },process.env.SECRET,
+      {expiresIn:'15min'}
+    )
+
+     const refreshToken=jwt.sign({
+       id:user._id,
+       email:user.email       
+     },process.env.SECRET,
+    {expiresIn:'7d'}
+    )
+
+    return {accessToken,refreshToken}
+}
 exports.login=async(req,res)=>{
     try {
         const{email,password}=req.body
@@ -116,26 +136,30 @@ exports.login=async(req,res)=>{
                 message:"Password Mismatched"
             })
         }
-        const payload={
-            id:user._id,
-            accountType:user.accountType,
-            email:user.email
-        }
+        const{accessToken,refreshToken}=createTokens(user)
+
+        user.refreshToken=refreshToken
+
+        await user.save();
+
         const option={
-            maxAge:2*24*60*60*1000,
+            maxAge:7*24*60*60*1000,
             httpOnly:true,
-            secure:process.env.PRODUCTION==="production" ? true : false,
-            sameSite:'none' 
+            secure:process.env.PRODUCTION==='production' ? true : false,
+            sameSite:'none'
+            
         } 
-        const token = jwt.sign(payload,process.env.SECRET,{expiresIn:'2d'})
+        
         user.password=undefined
-       
-        return res.cookie("token",token,option).status(200).json({
+        user.refreshToken=undefined
+        user.token=undefined
+        return res.cookie("refreshToken",refreshToken,option).status(200).json({
             success:true,
             message:"logged in successfully",
-            user
+            user,
+            accessToken
         })
-
+        
     } catch (error) {
         return res.status(500).json({
             success:false,
@@ -144,6 +168,60 @@ exports.login=async(req,res)=>{
         })
     }
 }
+
+exports.tokenRegenerate=async(req,res)=>{
+    try {
+        const token=req.cookies["refreshToken"]
+        if(!token){
+            return res.status(400).json({
+                success:false,
+                message:"Refresh token not found"
+            })
+        }
+        const decode=jwt.verify(token,process.env.SECRET)
+        
+        const user=await User.findById(decode.id)
+
+        
+        if(!user || user.refreshToken != token)
+        {
+            return res.status(400).json({
+                success:false,
+                message:'invalid token'
+            })
+        }
+        const{accessToken,refreshToken}=createTokens(user)
+    
+        user.refreshToken=refreshToken
+
+        await user.save()
+
+        user.password=undefined
+        user.refreshToken=undefined
+        user.token=undefined
+        
+        const options={
+            maxAge:7*24*60*60*1000,
+            httpOnly:true,
+            secure:process.env.PRODUCTION==='production' ? true : false,
+            sameSite:'none'
+            
+        }
+        return res.cookie("refreshToken",refreshToken,options).status(200).json({
+           success:true,
+           user,
+           accessToken
+        })
+    } catch (error) {
+      console.log(error);
+        
+        return res.status(403).json({
+            success:false,
+            message:error.message
+        })
+    }
+}
+
 exports.editProfile=async(req,res)=>{
     try {
         
@@ -206,34 +284,7 @@ exports.editProfile=async(req,res)=>{
         })
     }
 }
-exports.getUserDetail=async(req,res)=>{
-    try {
-        const id = req.id
-        if(!id){
-            return res.status(400).json({
-                success:false,
-                message:"ID not fount"
-            })
-        }
-        const user=await User.findById(id)
-       
-        user.password=undefined
 
-        return res.status(200).json({
-            success:false,
-            message:"User details",
-            user
-        })
-    } catch (error) {
-        console.log(error);
-        
-        return res.status(500).json({
-            success:false,
-            message:"can not fatch user details",
-            error:error.message
-        })
-    }
-}
 exports.changePassword=async(req,res)=>{
     try {
         const{password}=req.body
@@ -327,20 +378,29 @@ exports.allTeachers=async(req,res)=>{
     }
 }
 
-exports.logout=(req,res)=>{
+exports.logout=async(req,res)=>{
     try {
-        const options={
-            maxAge:new Date(0),
-            httpOnly:true,
-            secure:process.env.PRODUCTION==="production" ? true : false,
-            sameSite:'none' 
-        }
-        
-        return res.cookie("token","",options).status(200).json({
+       const token=req.cookies["refreshToken"]
+       
+       
+       if(!token){
+        return res.status(200).json({
             success:true,
-            message:"Successfully logged out"
+            message:"Logout successfully"
         })
-        
+    }
+       
+       const user=await User.findOne({refreshToken:token})
+
+       user.refreshToken=null
+
+       await user.save()
+       
+       return res.status(200).json({
+            success:true,
+            message:"Logout successfully"
+        })
+
     } catch (error) {
         return res.status(500).json({
             success:false,
